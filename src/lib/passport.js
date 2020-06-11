@@ -1,0 +1,51 @@
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+
+const pool = require('../database');
+const helpers = require('../lib/helpers')
+
+passport.use('local.signin', new LocalStrategy({
+    usernameField: "username",
+    passwordField: "password",
+    passReqToCallback: true
+}, async(req, username, password, done) => {
+    const rows = await pool.query('SELECT * FROM users WHERE username = ?', [username])
+    if(rows.length > 0) {
+        const user = rows[0];
+        const validPassword = await helpers.matchPassword(password, user.password);//validPassword retorna true or false
+        if(validPassword) {
+            done(null, user, req.flash("welcome " + user.username))
+        } else {
+            done(null, false, req.flash("incorrect password"));
+        }
+    } else {
+        return done(null, false, req.flash("the username does no exists"));
+    }
+}));
+
+
+passport.use('local.signup', new LocalStrategy({
+    usernameField: "username",
+    passwordField: "password",
+    passReqToCallback: true
+}, async (req, username, password, done) => {
+    const { fullname } = req.body;
+    const newUser = {
+        username: username,
+        password: password,
+        fullname: fullname
+    };
+    newUser.password = await helpers.encryptPassword(password);//encripto contraseña
+    const result = await pool.query('INSERT INTO users SET ?', [newUser]);//guardo en la base de datos
+    newUser.id = result.insertId;//le agrego un id
+    return done(null, newUser)//uso "done" para que pase a la siguiente instancia que es cargar la vista si todo salio OK
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done)=>{
+    const rows = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+    done(null, rows[0]);
+});

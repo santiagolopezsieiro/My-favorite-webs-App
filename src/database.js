@@ -25,3 +25,5 @@ pool.getConnection((err, connection) => {
 pool.query = promisify(pool.query);//esto convierte codigo de callback a promesas
 
 module.exports = pool;
+
+
