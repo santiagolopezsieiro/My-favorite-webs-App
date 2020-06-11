@@ -15,7 +15,7 @@ const app = express();
 require("./lib/passport");
 
 //settings
-app.set('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || 5000);
 app.set('views', path.join(__dirname, 'views'))//handlebars
 app.engine('.hbs', exphbs({//express-handlebars
     defaultLayout:'main',

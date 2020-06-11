@@ -20,3 +20,7 @@ y luego
 
 ``` npm run dev ```
 
+![alt text](https://https://github.com/santiagolopezsieiro/My-favorite-webs-App/blob/master/documentation/signin.png?raw=true)
+
+
+![alt text](https://https://github.com/santiagolopezsieiro/My-favorite-webs-App/blob/master/documentation/links.png?raw=true)
